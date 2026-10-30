@@ -193,7 +193,7 @@ git push
 | 權限 | 只需要 `contents: read` |
 | 步驟 | checkout → pnpm → node（含 cache）→ install → **lint** → **type-check** → **test** → build |
 | 注意 | 測試要用「只跑一次」的模式，不然 CI 會卡在監看模式永遠不會結束 |
-| 注意 | `pnpm lint` 預設帶 `--fix`，CI 上應該要「只檢查不修改」，想想看怎麼處理 |
+| 注意 | `pnpm lint` 裡的 `lint:oxlint` 和 `lint:eslint` 都帶 `--fix`，CI 上應該要「只檢查不修改」，想想看怎麼處理 |
 
 完成後：
 
@@ -204,11 +204,16 @@ git push
 <details>
 <summary>卡關提示：lint 在 CI 上不要 --fix</summary>
 
-做法一：在 `package.json` 加一個新指令 `"lint:check": "eslint ."`，CI 執行這個。
+在 `package.json` 加一個「只檢查」的指令，CI 執行這個：
 
-做法二：直接在 workflow 寫 `pnpm exec eslint .`。
+```jsonc
+"check:lint": "oxlint . && eslint ."
+```
 
-做法一比較好，因為本機也能跑一樣的指令。
+注意名稱**不能用 `lint:` 開頭**。因為 `pnpm lint` 是 `run-s "lint:*"`，會執行所有 `lint:` 開頭的指令，
+取名 `lint:check` 的話會被一起執行到。
+
+也可以直接在 workflow 寫 `pnpm exec oxlint . && pnpm exec eslint .`，但寫在 `package.json` 比較好，因為本機也能跑一樣的指令。
 
 </details>
 
@@ -228,7 +233,7 @@ jobs:
     steps:
       # checkout、pnpm、node、install 和 deploy.yml 一樣
       # 然後依序：
-      # - run: pnpm lint:check
+      # - run: pnpm check:lint
       # - run: pnpm type-check
       # - run: pnpm test:unit --run
       # - run: pnpm build-only

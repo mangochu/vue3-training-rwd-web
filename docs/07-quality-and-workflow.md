@@ -12,7 +12,7 @@
 
 | 指令 | 工具 | 檢查什麼 | 例子 |
 | --- | --- | --- | --- |
-| `pnpm lint` | ESLint | 程式碼**寫法**有沒有問題 | 宣告了沒用的變數、`v-for` 沒寫 `key` |
+| `pnpm lint` | Oxlint + ESLint | 程式碼**寫法**有沒有問題 | 宣告了沒用的變數、`v-for` 沒寫 `key` |
 | `pnpm format` | Prettier | 程式碼**長相**（縮排、引號、換行） | 單引號還是雙引號 |
 | `pnpm type-check` | vue-tsc | **型別**對不對 | 把 `number` 傳給 `string` 的 prop |
 | `pnpm test:unit` | Vitest | **行為**對不對 | `filterProjects` 傳 `'Vue'` 有沒有只回傳 Vue 的作品 |
@@ -196,7 +196,7 @@ pnpm exec lint-staged
 ```jsonc
 {
   "lint-staged": {
-    "*.{ts,vue}": ["eslint --fix", "prettier --write"],
+    "*.{ts,vue}": ["oxlint --fix", "eslint --fix", "prettier --write"],
     "*.{css,json,md}": ["prettier --write"]
   }
 }
